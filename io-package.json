@@ -595,6 +595,61 @@
         "def": false
       },
       "native": {}
+    },
+    {
+      "_id": "info.heatingAnomalyType",
+      "type": "state",
+      "common": {
+        "role": "text",
+        "name": {
+          "en": "Heating anomaly type",
+          "de": "Typ der Heizanomalie",
+          "ru": "Тип аномалии нагрева",
+          "pt": "Tipo de anomalia de aquecimento",
+          "nl": "Type opwarmafwijking",
+          "fr": "Type d'anomalie de chauffage",
+          "it": "Tipo di anomalia di riscaldamento",
+          "es": "Tipo de anomalía de calentamiento",
+          "pl": "Typ anomalii nagrzewania",
+          "uk": "Тип аномалії нагріву",
+          "zh-cn": "加热异常类型"
+        },
+        "type": "string",
+        "read": true,
+        "write": false,
+        "def": "none",
+        "states": {
+          "none": "Normal",
+          "too_slow": "Too slow",
+          "too_fast": "Too fast"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.heatingAnomalyDesc",
+      "type": "state",
+      "common": {
+        "role": "text",
+        "name": {
+          "en": "Heating anomaly description",
+          "de": "Beschreibung der Heizanomalie",
+          "ru": "Описание аномалии нагрева",
+          "pt": "Descrição da anomalia de aquecimento",
+          "nl": "Beschrijving van opwarmafwijking",
+          "fr": "Description de l'anomalie de chauffage",
+          "it": "Descrizione dell'anomalia di riscaldamento",
+          "es": "Descripción de la anomalía de calentamiento",
+          "pl": "Opis anomalii nagrzewania",
+          "uk": "Опис аномалії нагріву",
+          "zh-cn": "加热异常描述"
+        },
+        "type": "string",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
     }
   ]
 }

@@ -218,6 +218,8 @@ export class HarviaFenix extends utils.Adapter {
 		await this.setState('targetReachedNotified', false, true);
 		await this.setState('estimatedHeatingTimeRemaining', 0, true);
 		await this.setState('info.heatingAnomaly', false, true);
+		await this.setState('info.heatingAnomalyType', 'none', true);
+		await this.setState('info.heatingAnomalyDesc', '', true);
 		await this.setState('maxDuration', defaultMaxDuration, true);
 		await this.setState('info.minTemp', minTemp, true);
 		await this.setState('info.maxTemp', maxTemp, true);
@@ -810,6 +812,8 @@ export class HarviaFenix extends utils.Adapter {
 						await this.setState('targetReachedNotified', false, true);
 						await this.setState('estimatedHeatingTimeRemaining', 0, true);
 						await this.setState('info.heatingAnomaly', false, true);
+						await this.setState('info.heatingAnomalyType', 'none', true);
+						await this.setState('info.heatingAnomalyDesc', '', true);
 						if (!isHeatOn) {
 							this.sessionStartTime = null;
 							this.sessionStartTemp = null;
@@ -1290,6 +1294,8 @@ export class HarviaFenix extends utils.Adapter {
 			this.tempHistory = [];
 			await this.setState('estimatedHeatingTimeRemaining', 0, true);
 			await this.setState('info.heatingAnomaly', false, true);
+			await this.setState('info.heatingAnomalyType', 'none', true);
+			await this.setState('info.heatingAnomalyDesc', '', true);
 			return;
 		}
 
@@ -1345,17 +1351,32 @@ export class HarviaFenix extends utils.Adapter {
 		const activeHeatingMinutes = (now - this.sessionStartTime) / 60000;
 		if (activeHeatingMinutes >= 10 && windowMinutes >= 3) {
 			if (liveRate < 0.5 * historicalRate) {
-				const anomalyState = await this.getStateAsync('info.heatingAnomaly');
-				if (!anomalyState?.val) {
+				const currentType = (await this.getStateAsync('info.heatingAnomalyType'))?.val;
+				if (currentType !== 'too_slow') {
+					const desc = `⚠️ Heating rate (${liveRate.toFixed(2)} °C/min) is significantly below historical average (${historicalRate.toFixed(2)} °C/min). Check sauna door or heater element.`;
 					await this.setState('info.heatingAnomaly', true, true);
-					this.log.info(
-						`⚠️ Heating rate (${liveRate.toFixed(2)} °C/min) is significantly below historical average (${historicalRate.toFixed(2)} °C/min). Check sauna door or heater element.`,
-					);
+					await this.setState('info.heatingAnomalyType', 'too_slow', true);
+					await this.setState('info.heatingAnomalyDesc', desc, true);
+					this.log.info(desc);
+				}
+			} else if (liveRate > 1.8 * historicalRate) {
+				const currentType = (await this.getStateAsync('info.heatingAnomalyType'))?.val;
+				if (currentType !== 'too_fast') {
+					const desc = `🚨 Heating rate (${liveRate.toFixed(2)} °C/min) is significantly above historical average (${historicalRate.toFixed(2)} °C/min). Check temperature sensor or heater controller.`;
+					await this.setState('info.heatingAnomaly', true, true);
+					await this.setState('info.heatingAnomalyType', 'too_fast', true);
+					await this.setState('info.heatingAnomalyDesc', desc, true);
+					this.log.info(desc);
 				}
 			} else {
 				const anomalyState = await this.getStateAsync('info.heatingAnomaly');
 				if (anomalyState?.val) {
 					await this.setState('info.heatingAnomaly', false, true);
+					await this.setState('info.heatingAnomalyType', 'none', true);
+					await this.setState('info.heatingAnomalyDesc', '', true);
+					this.log.info(
+						`✅ Heating performance normalized (${liveRate.toFixed(2)} °C/min, historical: ${historicalRate.toFixed(2)} °C/min).`,
+					);
 				}
 			}
 		}
