@@ -1,4 +1,10 @@
 # Older changes
+## 0.2.8 (2026-07-26)
+* (meistermopper) Note latest repository availability in README installation section
+* (meistermopper) Fix doorSafety role to sensor.door for repochecker compliance
+* (meistermopper) Add missing CHANGELOG_OLD link to README.md (repochecker S6022)
+* (meistermopper) Fix changelog rotation in README_de.md to enforce 5 entries limit
+
 ## 0.2.7 (2026-07-17)
 * (meistermopper) Implement retry for "Device unavailable" and proactive token refresh
 * (meistermopper) Restore clean datapoint table and safety warnings in README files
